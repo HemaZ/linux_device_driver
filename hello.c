@@ -8,6 +8,9 @@ MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Ibrahim");
 MODULE_DESCRIPTION("A hello world Psuedo device driver");
 
+#define SIZE 255
+static unsigned char buffer[SIZE] = "This message from the driver buffer";
+
 int driver_open(struct inode *, struct file *)
 {
     printk("Device opened \n");
@@ -20,10 +23,31 @@ int driver_close(struct inode *, struct file *)
     return 0;
 }
 
+ssize_t driver_read(struct file *file, char __user *use_buffer, size_t count, loff_t *off)
+{
+    int not_copied = 0;
+    printk("Driver read is called \n");
+    printk("Count is %ld \n", count);
+    printk("offset is %lld \n", off);
+    printk("Driver message %s \n", buffer);
+    if (count + *off > SIZE)
+    {
+        count = SIZE - *off;
+    }
+    not_copied = copy_to_user(use_buffer, &buffer[*off], count);
+    if (not_copied)
+    {
+        return -1;
+    }
+    *off = count;
+    return 0;
+}
+
 struct file_operations fops = {
     .owner = THIS_MODULE,
     .open = driver_open,
-    .release = driver_close};
+    .release = driver_close,
+    .read = driver_read};
 
 dev_t dev_number;
 struct cdev st_character_dev;
