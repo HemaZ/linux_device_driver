@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(driver)
 
+add_executable(blink main.cpp)
+
 include(FetchContent)
 FetchContent_Declare(
   googletest

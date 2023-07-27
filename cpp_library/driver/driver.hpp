@@ -15,7 +15,7 @@ public:
         if (deviceFile.is_open())
             deviceFile.close();
     }
-    bool Write(const std::string &message)
+    bool write(const std::string &message)
     {
         deviceFile.open(deviceFilePath, std::ios::out);
         deviceFile.write(message.c_str(), message.size());
@@ -29,6 +29,14 @@ public:
         std::getline(deviceFile, output);
         deviceFile.close();
         return output;
+    }
+    bool turnOn()
+    {
+        return write("1");
+    }
+    bool turnOff()
+    {
+        return write("0");
     }
 };
 
