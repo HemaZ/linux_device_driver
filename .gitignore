@@ -1,0 +1,8 @@
+cpp_library/build/**
+build/**
+driver/.*
+driver/*.o
+driver/*.ko
+driver/*.mod*
+driver/Module.*
+driver/modules.*
