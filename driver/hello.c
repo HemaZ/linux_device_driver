@@ -10,6 +10,7 @@ MODULE_AUTHOR("Ibrahim");
 MODULE_DESCRIPTION("A hello world Psuedo device driver");
 
 #define SIZE 16
+#define GPIO_PIN 2
 static unsigned char buffer[SIZE] = "";
 
 int driver_open(struct inode *node, struct file *file) {
@@ -54,6 +55,16 @@ ssize_t driver_write(struct file *file, const char __user *user_buffer,
     return -1;
   }
   not_copied = copy_from_user(&buffer[*off], user_buffer, count);
+  switch (buffer[0]) {
+  case '1':
+    printk("Switching on the LED \n");
+    gpio_set_value(GPIO_PIN, 1);
+    break;
+  case '0':
+    printk("Switching OFF the LED \n");
+    gpio_set_value(GPIO_PIN, 0);
+    break;
+  }
   if (not_copied) {
     return -1;
   }
@@ -111,6 +122,21 @@ static int __init hello_world_driver_init(void) {
     unregister_chrdev_region(dev_number, 1);
     return -1;
   }
+  if (gpio_request(GPIO_PIN, "gpio_led_2")) {
+    printk("Error allocating GPIO %d\n", GPIO_PIN);
+    cdev_del(&st_character_dev);
+    class_destroy(device_class);
+    unregister_chrdev_region(dev_number, 1);
+    return -1;
+  }
+  if (gpio_direction_output(GPIO_PIN, 0)) {
+    printk("Error setting GPIO pin to output\n");
+    gpio_free(GPIO_PIN);
+    cdev_del(&st_character_dev);
+    class_destroy(device_class);
+    unregister_chrdev_region(dev_number, 1);
+    return -1;
+  }
   printk("Device driver created\n");
   return 0;
 }
@@ -120,6 +146,8 @@ static void __exit hello_world_driver_exit(void) {
   device_destroy(device_class, dev_number);
   class_destroy(device_class);
   unregister_chrdev_region(dev_number, 1);
+  gpio_set_value(GPIO_PIN, 0);
+  gpio_free(GPIO_PIN);
   printk("Goodbye World!\n");
 }
 
