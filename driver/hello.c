@@ -114,7 +114,7 @@ static int __init hello_world_driver_init(void) {
 
     return -1;
   }
-  my_device = device_create(device_class, NULL, dev_number, NULL, "test_file");
+  my_device = device_create(device_class, NULL, dev_number, NULL, "hello_dev");
   if (my_device == NULL) {
     printk("Failed creating the device \n");
     cdev_del(&st_character_dev);

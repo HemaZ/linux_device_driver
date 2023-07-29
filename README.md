@@ -5,12 +5,18 @@ Linux driver implementation based on the great tutorials by [Moatasem Elsayed](h
 
 ## Build 
 
+You can build and run tests using the provided `test.sh` file
+
+`sh test.sh`
+
+or if you wish to build it manually. check below
+
 ### Driver
 
 ```sh
 cd driver && make #Build the driver
 sudo insmod hello.ko #Load it in the kernel
-sudo chmod 777 /dev/test_file #change the driver file permissions
+sudo chmod 777 /dev/hello_dev #change the driver file permissions
 ```
 
 ### C++ Library
@@ -25,11 +31,11 @@ ctest # (Optional) run tests
 
 ## How to use 
 
-form the terminal you can write directly to the file `/dev/test_file`
+form the terminal you can write directly to the file `/dev/hello_dev`
 
 ```sh
-echo 1 > /dev/test_file # turn on the led
-echo 0 > /dev/test_file # turn off the led
+echo 1 > /dev/hello_dev # turn on the led
+echo 0 > /dev/hello_dev # turn off the led
 ```
 
 or using the c++ library
